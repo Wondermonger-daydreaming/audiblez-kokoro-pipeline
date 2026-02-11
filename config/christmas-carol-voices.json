@@ -1,0 +1,18 @@
+{
+  "default_voice": "bm_george",
+  "default_speed": 1.0,
+  "chapters": {
+    "default": {
+      "voice": "bm_george",
+      "speed": 1.0
+    },
+    "0": {
+      "voice": "bm_george",
+      "speed": 0.95
+    },
+    "1": {
+      "voice": "bm_george",
+      "speed": 1.0
+    }
+  }
+}

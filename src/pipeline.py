@@ -602,7 +602,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--direct", "-d",
         action="store_true",
         default=False,
-        help="Direct Kokoro synthesis (bypass audiblez)",
+        help="Use the direct Kokoro synthesis path",
     )
 
     # Skip existing

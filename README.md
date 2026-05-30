@@ -177,7 +177,7 @@ If Ollama is unreachable, the pipeline logs a warning and continues with the un-
 | `--substitutions` | | `config/substitutions.json` if present | Pronunciation substitutions JSON path |
 | `--llm` | | `false` | Enable LLM enhancement via Ollama |
 | `--llm-model` | | `llama3.2` | Ollama model for `--llm` |
-| `--direct` | `-d` | `false` | Use direct Kokoro synthesis (bypass the audiblez wrapper) |
+| `--direct` | `-d` | `false` | Use the direct Kokoro synthesis path (explicit single-voice mode) |
 | `--no-skip-existing` | | skip-existing on | Re-convert even if the `.m4b` already exists |
 | `--dry-run` | | `false` | Parse and display info without synthesizing |
 | `--bitrate` | | `64k` | AAC bitrate for the M4B |

@@ -251,7 +251,7 @@ Also supports Spanish (`e`), French (`f`), Hindi (`h`), Italian (`i`), Japanese 
 
 **`ffmpeg not found`** — `sudo apt install ffmpeg` (provides both `ffmpeg` and `ffprobe`, both required)
 
-**`kokoro` import error** — Install order matters. `setup.sh` handles it; manually: `pip install "kokoro>=0.9.4"` first, then `pip install audiblez --no-deps`.
+**`kokoro` import error** — Install it with `pip install "kokoro>=0.9.4"`, and make sure `espeak-ng` is present (Kokoro uses it for phonemization). `setup.sh` does both.
 
 **CUDA not detected** — Check with `python -c "import torch; print(torch.cuda.is_available())"`. If `False`, reinstall PyTorch with CUDA from [pytorch.org](https://pytorch.org/get-started/locally/), or pass `--cpu`.
 

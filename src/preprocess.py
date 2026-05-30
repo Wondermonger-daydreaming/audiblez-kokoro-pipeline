@@ -246,8 +246,13 @@ def expand_abbreviations(text: str) -> str:
         # The abbreviation ends with '.', so we anchor on the left with \b
         # and on the right we require a space, end-of-string, or punctuation
         # (but NOT another letter, which would indicate it's mid-word).
+        #
+        # Match case-insensitively so a sentence-initial capitalization
+        # ("Approx." at the start of a sentence) still expands. The (?<!\w)
+        # guard plus the required trailing period keep this from mis-matching
+        # word suffixes like "list." or "1st.".
         pattern = r"(?<!\w)" + re.escape(abbr) + r"(?=\s|$|[,;:!?\"\')])"
-        text = re.sub(pattern, expansion, text)
+        text = re.sub(pattern, expansion, text, flags=re.IGNORECASE)
     return text
 
 

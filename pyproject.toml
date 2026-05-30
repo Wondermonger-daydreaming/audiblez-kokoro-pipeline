@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "audiblez-kokoro-pipeline"
+description = "EPUB-to-Audiobook pipeline using Kokoro-82M"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dynamic = ["version"]
+dependencies = [
+    "kokoro>=0.9.4",
+    "torch>=2.4.0",
+    "torchaudio>=2.4.0",
+    "ebooklib>=0.18",
+    "beautifulsoup4>=4.12",
+    "lxml>=5.0",
+    "soundfile>=0.13.1",
+    "numpy>=1.26",
+    "misaki>=0.7.10",
+    "tqdm>=4.66",
+    "rich>=13.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+# Console entry point. The importable package is `src` (run `python -m src.pipeline`
+# or the installed `audiblez-kokoro` command — both call the same main()).
+audiblez-kokoro = "src.pipeline:main"
+
+[tool.setuptools]
+# The code lives in a directory literally named `src`, so the importable package
+# is `src` and the entry point is `src.pipeline:main`. This keeps every existing
+# `python -m src.pipeline` invocation working unchanged. Caveat: a top-level
+# package named `src` is non-standard and can collide with other projects on a
+# non-editable system-wide install; prefer a venv. Renaming `src/` ->
+# `audiblez_kokoro/` would remove the caveat but is a larger, breaking change.
+packages = ["src"]
+
+[tool.setuptools.dynamic]
+version = { attr = "src.__version__" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

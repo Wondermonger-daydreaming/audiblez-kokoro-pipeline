@@ -65,10 +65,8 @@ echo ""
 echo "[4/5] Installing Python dependencies (this may take a while)..."
 "$VENV_DIR/bin/pip" install --upgrade pip -q
 
-# Install kokoro first (latest), then audiblez with --no-deps to avoid
-# version conflict (audiblez 0.4.9 pins kokoro<0.8.0 but 0.9.4 works fine)
+# Install kokoro (latest, for the better voices) plus PyTorch and the rest
 "$VENV_DIR/bin/pip" install "kokoro>=0.9.4" torch torchaudio -q
-"$VENV_DIR/bin/pip" install audiblez --no-deps -q
 "$VENV_DIR/bin/pip" install ebooklib beautifulsoup4 lxml soundfile numpy misaki tqdm rich pytest -q
 
 # 5. Validate installation
@@ -92,12 +90,6 @@ try:
     print(f'  Kokoro:    OK')
 except ImportError:
     print('  Kokoro:    NOT INSTALLED')
-
-try:
-    import audiblez
-    print(f'  Audiblez:  OK')
-except ImportError:
-    print('  Audiblez:  NOT INSTALLED')
 
 try:
     import soundfile

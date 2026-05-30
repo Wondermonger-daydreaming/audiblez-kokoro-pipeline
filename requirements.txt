@@ -2,10 +2,7 @@
 # Install: pip install -r requirements.txt
 
 # Core TTS
-# Note: audiblez 0.4.9 pins kokoro<0.8.0 but kokoro 0.9.4 has better voices.
-# We install kokoro first at latest, then audiblez with --no-deps in setup.sh.
 kokoro>=0.9.4
-audiblez>=0.4.9
 
 # PyTorch with CUDA support
 torch>=2.4.0

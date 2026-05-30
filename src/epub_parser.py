@@ -323,11 +323,35 @@ def parse_epub(epub_path: Path) -> tuple[BookMetadata, list[Chapter]]:
 
     cover_image = _extract_cover_image(book)
 
-    # Extract chapters from document items
+    # Extract chapters from document items in *reading* order.
+    #
+    # book.get_items_of_type() returns manifest order, which is not guaranteed
+    # to match the reading order the author intended. The spine defines that
+    # order, so we walk it first, then defensively append any document items
+    # the spine omits (so no content is ever dropped), and fall back to plain
+    # manifest order only if the spine yields nothing usable.
+    items_by_id = {item.get_id(): item for item in book.get_items()}
+    ordered_items = []
+    seen_ids: set[str] = set()
+
+    for entry in book.spine:
+        idref = entry[0] if isinstance(entry, (tuple, list)) else entry
+        item = items_by_id.get(idref)
+        if item is not None and item.get_type() == ebooklib.ITEM_DOCUMENT:
+            ordered_items.append(item)
+            seen_ids.add(idref)
+
+    for item in book.get_items_of_type(ebooklib.ITEM_DOCUMENT):
+        if item.get_id() not in seen_ids:
+            ordered_items.append(item)
+
+    if not ordered_items:
+        ordered_items = list(book.get_items_of_type(ebooklib.ITEM_DOCUMENT))
+
     chapters: list[Chapter] = []
     chapter_index = 0
 
-    for item in book.get_items_of_type(ebooklib.ITEM_DOCUMENT):
+    for item in ordered_items:
         html_content = item.get_content().decode("utf-8", errors="replace")
 
         # Extract text and check minimum length

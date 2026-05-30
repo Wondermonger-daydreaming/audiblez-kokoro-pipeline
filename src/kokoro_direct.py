@@ -23,15 +23,8 @@ except ImportError as _sf_err:
         "Install it with: pip install soundfile"
     ) from _sf_err
 
-try:
-    from kokoro import KPipeline
-except ImportError as _kokoro_err:
-    raise ImportError(
-        "kokoro is required for TTS synthesis. "
-        "Install it with: pip install kokoro"
-    ) from _kokoro_err
-
 if TYPE_CHECKING:
+    from kokoro import KPipeline
     from epub_parser import Chapter
 
 logger = logging.getLogger(__name__)
@@ -61,9 +54,23 @@ def init_pipeline(lang_code: str = "a", device: str = "auto") -> KPipeline:
         except ImportError:
             device = "cpu"
 
+    # Import lazily so the module (and everything that imports it, e.g. the
+    # CLI's --help and dry-run paths) stays usable without the heavy kokoro /
+    # torch stack installed. This also lets the integration tests stub
+    # synthesis without kokoro present, as their docstring intends.
+    try:
+        from kokoro import KPipeline
+    except ImportError as exc:
+        raise ImportError(
+            "kokoro is required for TTS synthesis. "
+            "Install it with: pip install kokoro"
+        ) from exc
+
     logger.info("Initializing Kokoro pipeline: lang_code=%r, device=%r", lang_code, device)
 
-    pipeline = KPipeline(lang_code=lang_code)
+    # Pass the resolved device through to KPipeline; otherwise --cpu/--cuda
+    # would be silently ignored in the single-voice and --direct paths.
+    pipeline = KPipeline(lang_code=lang_code, device=device)
 
     logger.info("Kokoro pipeline initialized on %s", device)
     return pipeline

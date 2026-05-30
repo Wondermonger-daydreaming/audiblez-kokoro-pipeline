@@ -150,19 +150,24 @@ def _convert_single(
         chapter_titles: list[str] = []
 
         if voice_config is not None:
-            # Multi-voice path
-            from .multi_voice import VoiceManager, convert_with_multi_voice
+            # Multi-voice path: resolve the per-chapter voice/speed from the
+            # config and synthesize each chapter with its assigned pipeline.
+            # (convert_with_multi_voice is a *whole-book* helper with a
+            # different signature; the per-chapter primitives are what we want
+            # here, mirroring the single-file pipeline in pipeline.py.)
+            from .multi_voice import VoiceManager
 
-            voice_mgr = VoiceManager(voice_config)
+            voice_mgr = VoiceManager(voice_config, device=device)
 
             for i, ch in enumerate(chapters):
                 chapter_wav = tmp_dir / f"chapter_{i:02d}.wav"
-                convert_with_multi_voice(
+                ch_pipeline, ch_voice, ch_speed = voice_mgr.get_pipeline_and_voice(i)
+                kokoro_direct.synthesize_chapter(
+                    pipeline=ch_pipeline,
                     text=ch.text,
+                    voice=ch_voice,
+                    speed=ch_speed,
                     output_path=chapter_wav,
-                    voice_manager=voice_mgr,
-                    speed=speed,
-                    device=device,
                 )
                 wav_paths.append(chapter_wav)
                 chapter_titles.append(ch.title)
